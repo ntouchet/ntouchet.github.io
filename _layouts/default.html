@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+
+  <body>
+  <header class="header">My Header</header>
+
+  <div class="main-container">
+    <div class="image-column left">
+    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class=sidebar-image>
+    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
+    </div>
+
+    <div class="content-box">
+      <p>Main content goes here</p>
+    </div>
+
+    <div class="image-column right mirror">
+    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
+    </div>
+  </div>
+
+  <footer class="footer">My Footer</footer>
+</body>
+</html>
+

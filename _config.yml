@@ -20,12 +20,8 @@
 
 title: Cranthabumore
 email: ndtouchet@proton.me
-description: >- # this means to ignore newlines until "baseurl:"
-  This webstit is my personal page. I write about projects, opinions,
-  and the things going on in my life. I want to get better at writing 
-  and hope to do some interviews and other pieces. 
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://ntouchet.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  ntouchet
 
 # Build settings

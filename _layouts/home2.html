@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }}</title> <!-- Dynamic page title from front matter -->
+  
+  <!-- Link to your CSS stylesheet -->
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <div class="sidebar left-sidebar"
+       style="background-image: url('{{ page.sidebar_image | default: "/assets/img/default.JPG" }}');">
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    {{ content }} <!-- This is where the content from your page will go -->
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="sidebar right-sidebar"
+       style="background-image: url('{{ page.sidebar_image | default: "/assets/img/default.JPG" }}');">
+  </div>
+
+</body>
+</html>

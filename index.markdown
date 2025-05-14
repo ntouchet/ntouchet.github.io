@@ -4,3 +4,6 @@
 
 layout: home
 ---
+
+This is my layout page.
+$$\lambda = 0$$
