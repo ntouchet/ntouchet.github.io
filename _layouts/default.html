@@ -4,7 +4,13 @@
   {%- include head.html -%}
 
   <body>
-  <header class="header">My Header</header>
+    <div class="header-container">
+      <div class="header-title"><span class="rainbow-wrapper" data-content='Electric Soup'><span class="rainbow">Electric Soup</span></span></div>
+      <nav class="header-nav">
+                
+      </nav>
+</div>
+
 
   <div class="main-container">
     <div class="image-column left">
@@ -15,9 +21,13 @@
     <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
     </div>
 
-    <div class="content-box">
-      <p>Main content goes here</p>
-    </div>
+            <div class="content-wrapper">
+                <div class="retro-container">
+                    <div class="content">
+                        {{ content }} <!-- This is where the content from your page will go -->
+                    </div>
+                </div>
+            </div>
 
     <div class="image-column right mirror">
     <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class="sidebar-image">
