@@ -2,18 +2,17 @@
 body {
     background-image: url('../img/default.gif');
     background-attachment: fixed;
-    position: relative;
-  height: 100vh;
+    position: relative; height: 100vh;
 }
 
 /* Layout Container */
 .main-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding-top: 60px;
   padding-bottom: 40px;
-  height: 100vh;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
@@ -58,7 +57,7 @@ body {
 /* Content Box */
 .content-box {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 2rem;
+  margin-top: 10px;
   height: 80vh;
   overflow-y: auto;
   border-radius: 10px;
@@ -78,8 +77,9 @@ body {
   background: #fff9c4;
   padding: 2rem;
   box-shadow:
-    inset 0 0 10px rgba(0, 0, 0, 0.2),
-    5px 5px 15px rgba(0, 0, 0, 0.1);
+  inset 0 0 10px rgba(0, 0, 0, 0.2),
+  5px 5px 15px rgba(0, 0, 0, 0.1);
+  width: 50vw;
   max-width: 80%;
   margin: 2rem auto;
   overflow: visible;
@@ -96,13 +96,13 @@ body {
   background: linear-gradient(135deg, #e0e0e0, #b0b0b0);
   z-index: -1;
   box-shadow:
-    inset 2px 2px 5px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 5px rgba(255, 255, 255, 0.4);
+  inset 2px 2px 5px rgba(0, 0, 0, 0.3),
+  inset -2px -2px 5px rgba(255, 255, 255, 0.4);
 }
 
 /*rainbow text*/
 .rainbow {
-   font-family: 'Arial Black', sans-serif;
+  font-family: 'Lucida Console', Courier, Monospace;
   font-weight: bold;
   background: linear-gradient(
     90deg,
@@ -122,7 +122,7 @@ body {
   transform-origin: left;
   display: inline-block;
   position: relative;
-  font-size: 2rem;
+  font-size: 4rem;
   display: inline-block; /* needed to center */
   transform-origin: center;
   
@@ -146,33 +146,41 @@ body {
     }
   }
 }
+
 /* Container for the header */
 .header-container {
-    position: fixed;
+  position: relative;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 20vw; /* Adjust this width as you like */
-  border-radius: 8px;
+  width: 45vw; /* Adjust this width as you like */
   padding: 1rem 2rem;
-  color: white;
   text-align: center;
   z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 /* Main title inside header */
 .header-title {
-  font-size: 1.8rem;
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
-/* Navigation bar below the title */
 .header-nav {
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  font-size: 1.1rem;
+  gap: 1rem;
+  font-size: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
+.header-nav a {
+  text-decoration: underline;
+  color: #32CD32; /* or pick a color like #333 */
+  
+}
+.header-nav a:hover {
+    color: #00FF00;
+}

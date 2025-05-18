@@ -5,38 +5,25 @@
 
   <body>
     <div class="header-container">
-      <div class="header-title"><span class="rainbow-wrapper" data-content='Electric Soup'><span class="rainbow">Electric Soup</span></span></div>
-      <nav class="header-nav">
-                
-      </nav>
-</div>
-
-
-  <div class="main-container">
-    <div class="image-column left">
-    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class=sidebar-image>
-    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
+      <div class="header-title">
+        <a href="{{ '/', relative_url}}">
+          <span class="rainbow-wrapper" data-content='Electric Soup'>
+            <span class="rainbow">Electric Soup</span>
+          </span>
+        </a>
+      </div>
+          <ul class="header-nav">
+            {% for page in site.pages %}
+              {% if page.list_in_nav %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+              {% endif %}
+            {% endfor %}
+<li><a href="{{ '/about/', relative_url}}">About</a></li>
+          </ul>    
     </div>
 
-            <div class="content-wrapper">
-                <div class="retro-container">
-                    <div class="content">
-                        {{ content }} <!-- This is where the content from your page will go -->
-                    </div>
-                </div>
-            </div>
 
-    <div class="image-column right mirror">
-    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
-    </div>
-  </div>
+    {{ content }} <!-- This is where the content from your page will go -->
 
   <footer class="footer">My Footer</footer>
 </body>

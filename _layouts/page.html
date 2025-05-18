@@ -1,14 +1,31 @@
 ---
 layout: default
 ---
-<article class="post">
 
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
-  </header>
+<div class="home">
+    <div class="image-column left">
+    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class=sidebar-image>
+    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
+    </div>
 
-  <div class="post-content">
-    {{ content }}
-  </div>
+            <div class="content-wrapper">
+                <div class="retro-container">
+                    <div class="content">
+                        {{ content }} <!-- This is where the content from your page will go -->
+                    </div>
+                </div>
+            </div>
 
-</article>
+    <div class="image-column right mirror">
+    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
+    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
+    </div>
+
+
+</div>

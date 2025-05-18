@@ -1,9 +1,14 @@
 ---
 # Feel free to add content and custom Front Matter to this file.
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
+title: Home
+permalink: /
 ---
 
-This is my layout page.
-$$\lambda = 0$$
+### My Vavorite Posts
+No posts yet :(
+
+### Posts
+No posts yet :(
+
