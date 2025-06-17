@@ -20,7 +20,7 @@ if x < 0.6 then x = x-0.2
 
 #### a. Sketch the PDF of the process that generated this signal. 
 
-The function "rnd" would have a uniform distribution for all floats between 0 and 1. Applying the function outlined above creates a left shift of 0.2 for all values below 0.6. The sketch for the PDF for rnd and the signal are shown below. 
+The function "rnd" would have a uniform distribution for all floats between 0 and 1. Applying the function outlined above creates a left shift of 0.2 for all values below 0.6. The sketch for the PDF for rnd and the signal are shown below.  
 
 <img src="/assets/img/dsp_chapt2/sketch_of_pdf.jpg" width="300">
 
