@@ -26,7 +26,7 @@ The function "rnd" would have a uniform distribution for all floats between 0 an
 
 #### b. Generate and plot a signal containing 300 points from this algorithm. 
 
- To Plot and generate the signal created a small app using x and dearImGui. If I were to do this project I would use python, but I prefer c and wanted to get some experience using dearImGui. A plot of a signal with 300 points is shown below.
+ To Plot and generate the signal I created a small app using c and dearImGui. If I were to redo this project I would use python, but I prefer c and wanted to get some experience using dearImGui. A plot of a signal with 300 points is shown below.
 <img src="/assets/img/dsp_chapt2/300_point_signal.png" width="500">
 #### c. Generate and plot the histogram of 1000 points acquired from this algorithm.  Use a bin width of 0.01. 
 <img src="/assets/img/dsp_chapt2/1000_histogram.png" width="500">
