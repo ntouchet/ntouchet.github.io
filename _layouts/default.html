@@ -1,31 +1,27 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
+{%- include head.html %}
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  {% include gif-column.html side="left" %}
+  {% include gif-column.html side="right" %}
 
-  {%- include head.html -%}
+  <div class="page">
+    {% include header.html %}
 
-  <body>
-    <div class="header-container">
-      <div class="header-title">
-        <a href="{{ '/', relative_url}}">
-          <span class="rainbow-wrapper" data-content='Electric Soup'>
-            <span class="rainbow">Electric Soup</span>
-          </span>
-        </a>
+    <main id="main" class="window">
+      <div class="window__titlebar">
+        <h1 class="window__title">{{ page.title | default: site.title | escape }}</h1>
+        <div class="window__buttons" aria-hidden="true">
+          <span class="btn-min"></span><span class="btn-max"></span><span class="btn-close"></span>
+        </div>
       </div>
-          <ul class="header-nav">
-            {% for page in site.pages %}
-              {% if page.list_in_nav %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-              {% endif %}
-            {% endfor %}
-<li><a href="{{ '/about/', relative_url}}">About</a></li>
-          </ul>    
-    </div>
+      <div class="window__body">
+        {{ content }}
+      </div>
+    </main>
 
-
-    {{ content }} <!-- This is where the content from your page will go -->
-
-  <footer class="footer">My Footer</footer>
+    {% include footer.html %}
+  </div>
 </body>
 </html>
-

@@ -1,0 +1,297 @@
+#!/usr/bin/env python3
+"""
+new-post — scaffold posts for Electric Soup.
+
+  ./new-post "Chapter 4"                     make a post (asks where it goes)
+  ./new-post "Chapter 4" --in dsp-smith      ...straight into a series/section
+  ./new-post "Big idea" --draft              make a draft (not published yet)
+  ./new-post --publish academics/dsp-smith/_drafts/big-idea.md
+                                             turn a draft into a real post
+  ./new-post --new-series projects/hydrophone "Open Hydrophone"
+                                             start a new series folder
+  ./new-post --list                          show where posts can go
+
+Add --edit to open the new file in $EDITOR. See README.md for the full guide.
+"""
+
+import argparse
+import datetime as dt
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+SKIP_DIRS = {"_site", "vendor", "node_modules", ".git", ".jekyll-cache", ".bundle"}
+
+POST_TEMPLATE = """\
+---
+title: "{title}"
+# description: One sentence about this post (shown in post lists and link previews).
+# favorite: true    # uncomment to feature this post on the home page
+---
+
+Start writing here!
+
+{{% comment %}}
+  Quick reference. This block never shows up on the site; delete it whenever.
+
+  ## Big heading        ### Smaller heading        #### Question-sized heading
+  **bold**   *italic*   [a link](https://example.com)   `inline code`
+
+  Image:           ![What the image shows](/assets/img/{slug}/plot.png)
+  With a caption:  {{% include figure.html src="/assets/img/{slug}/plot.png" caption="Figure 1: ..." %}}
+  Inline math:     $f_s > 2 f_{{max}}$
+  Display math:    $$X[k] = \\sum_{{n=0}}^{{N-1}} x[n] e^{{-j 2 \\pi k n / N}}$$
+  Code block:      ```c   (then your code, then ``` on its own line)
+{{% endcomment %}}
+"""
+
+SERIES_TEMPLATE = """\
+---
+layout: series
+title: "{title}"
+# short_title: Short Name   # optional, used for the little tag next to posts
+description: One sentence about what this series is.
+---
+"""
+
+
+# ----------------------------------------------------------------------------
+# Finding sections and series
+# ----------------------------------------------------------------------------
+
+def front_matter(path: Path) -> dict:
+    """Very small front-matter reader: good enough for `key: value` lines."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {}
+    m = re.match(r"---\s*\n(.*?)\n---", text, re.S)
+    if not m:
+        return {}
+    data = {}
+    for line in m.group(1).splitlines():
+        kv = re.match(r"^([A-Za-z_][\w-]*):\s*(.*?)\s*$", line)
+        if kv:
+            data[kv.group(1)] = kv.group(2).strip("\"'")
+    return data
+
+
+def find_locations():
+    """Return a list of (folder, label, kind) where posts can live."""
+    found = []
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = sorted(d for d in dirnames
+                             if d not in SKIP_DIRS and not d.startswith((".", "_")))
+        for name in ("index.md", "index.markdown", "index.html"):
+            if name in filenames:
+                fm = front_matter(Path(dirpath) / name)
+                if fm.get("layout") in ("section", "series"):
+                    rel = Path(dirpath).relative_to(ROOT).as_posix()
+                    found.append((rel, fm.get("title", rel), fm["layout"]))
+                break
+    found.sort(key=lambda loc: loc[0])
+    labelled = [("", "Home page only (not part of any section)", "home")]
+    for folder, title, kind in found:
+        if kind == "series":
+            parent = folder.rsplit("/", 1)[0]
+            parent_title = next((t for f, t, _ in found if f == parent), parent)
+            title = f"{parent_title} › {title}"
+        labelled.append((folder, title, kind))
+    return labelled
+
+
+def resolve_location(choice, locations):
+    want = choice.strip().strip("/").lower()
+    if want in ("", "home", "root", "_posts"):
+        return locations[0]
+    exact = [loc for loc in locations if loc[0].lower() == want]
+    if exact:
+        return exact[0]
+    by_name = [loc for loc in locations if loc[0].lower().rsplit("/", 1)[-1] == want]
+    if len(by_name) == 1:
+        return by_name[0]
+    sys.exit(f"Couldn't find a section or series called '{choice}'.\n"
+             f"Run ./new-post --list to see the options.")
+
+
+def ask_location(locations):
+    print("Where should this post go?\n")
+    for i, (folder, label, _) in enumerate(locations, 1):
+        print(f"  {i}) {label}")
+        print(f"     {folder + '/' if folder else ''}_posts/")
+    print()
+    while True:
+        raw = input(f"Pick a number [1-{len(locations)}] (Enter = 1): ").strip()
+        if not raw:
+            return locations[0]
+        if raw.isdigit() and 1 <= int(raw) <= len(locations):
+            return locations[int(raw) - 1]
+        print("  That's not one of the options, try again.")
+
+
+# ----------------------------------------------------------------------------
+# Helpers
+# ----------------------------------------------------------------------------
+
+def slugify(text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug or "untitled"
+
+
+def post_url(folder: str, slug: str) -> str:
+    return f"/{folder.lower()}/{slug}/" if folder else f"/{slug}/"
+
+
+def maybe_edit(path: Path, enabled: bool):
+    editor = os.environ.get("VISUAL") or os.environ.get("EDITOR")
+    if enabled and editor:
+        subprocess.call([*editor.split(), str(path)])
+    elif enabled:
+        print("(Set $EDITOR to have --edit open the file for you.)")
+
+
+def rel(path: Path) -> str:
+    return path.relative_to(ROOT).as_posix()
+
+
+# ----------------------------------------------------------------------------
+# Commands
+# ----------------------------------------------------------------------------
+
+def cmd_new_post(args):
+    title = args.title.strip()
+    slug = slugify(title)
+    locations = find_locations()
+
+    if args.where is not None:
+        folder, label, _ = resolve_location(args.where, locations)
+    elif sys.stdin.isatty():
+        folder, label, _ = ask_location(locations)
+    else:
+        folder, label, _ = locations[0]
+
+    base = ROOT / folder if folder else ROOT
+    if args.draft:
+        path = base / "_drafts" / f"{slug}.md"
+    else:
+        date = args.date or dt.date.today().isoformat()
+        path = base / "_posts" / f"{date}-{slug}.md"
+
+    if path.exists():
+        sys.exit(f"{rel(path)} already exists; pick a different title.")
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(POST_TEMPLATE.format(title=title.replace('"', '\\"'), slug=slug),
+                    encoding="utf-8")
+    img_dir = ROOT / "assets" / "img" / slug
+    img_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"\n  Created   {rel(path)}")
+    print(f"  Section   {label}")
+    print(f"  Images    put them in {rel(img_dir)}/")
+    if args.draft:
+        print(f"  URL       {post_url(folder, slug)}  (once published)")
+        print("\n  Drafts don't go live. Preview with: bundle exec jekyll serve --drafts")
+        print(f"  When it's ready:  ./new-post --publish {rel(path)}")
+    else:
+        print(f"  URL       {post_url(folder, slug)}")
+        print("\n  Preview:  bundle exec jekyll serve   ->  http://localhost:4000")
+    print()
+    maybe_edit(path, args.edit)
+
+
+def cmd_publish(args):
+    src = Path(args.publish).resolve()
+    if not src.is_file():
+        sys.exit(f"Can't find {args.publish}")
+    if src.parent.name != "_drafts":
+        sys.exit("That file isn't in a _drafts folder, so it's already a post.")
+    date = args.date or dt.date.today().isoformat()
+    dest = src.parent.parent / "_posts" / f"{date}-{src.name}"
+    if dest.exists():
+        sys.exit(f"{rel(dest)} already exists.")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    src.rename(dest)
+    try:
+        src.parent.rmdir()  # tidy up an empty _drafts folder
+    except OSError:
+        pass
+    folder = rel(dest.parent.parent) if dest.parent.parent != ROOT else ""
+    print(f"\n  Published {rel(dest)}")
+    print(f"  URL       {post_url(folder, slugify(src.stem))}\n")
+    maybe_edit(dest, args.edit)
+
+
+def cmd_new_series(args):
+    folder_arg, title = args.new_series
+    folder = Path(folder_arg.strip("/"))
+    if len(folder.parts) != 2:
+        sys.exit("Give the series folder as <section>/<series-name>, "
+                 "e.g. projects/open-hydrophone")
+    section = ROOT / folder.parts[0]
+    if not any(front_matter(section / n).get("layout") == "section"
+               for n in ("index.md", "index.markdown", "index.html")):
+        sys.exit(f"'{folder.parts[0]}' isn't a section yet. Existing sections: "
+                 + ", ".join(f for f, _, k in find_locations() if k == "section"))
+    series_dir = ROOT / folder.parent / slugify(folder.name)
+    index = series_dir / "index.md"
+    if index.exists():
+        sys.exit(f"{rel(index)} already exists.")
+    (series_dir / "_posts").mkdir(parents=True, exist_ok=True)
+    index.write_text(SERIES_TEMPLATE.format(title=title.replace('"', '\\"')),
+                     encoding="utf-8")
+    print(f"\n  Created   {rel(index)}   (edit the description in there)")
+    print(f"  Posts go  {rel(series_dir / '_posts')}/")
+    print(f"  Page URL  /{rel(series_dir).lower()}/")
+    print(f"\n  Add the first post with:  ./new-post \"Part 1\" --in {series_dir.name}\n")
+    maybe_edit(index, args.edit)
+
+
+def cmd_list(_args):
+    print()
+    for folder, label, _ in find_locations():
+        name = folder.rsplit("/", 1)[-1] if folder else "home"
+        print(f"  --in {name:<18} {label}")
+    print()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+        usage="./new-post \"Post title\" [--in WHERE] [--draft] [--date YYYY-MM-DD] [--edit]")
+    parser.add_argument("title", nargs="?", help="title of the new post")
+    parser.add_argument("--in", dest="where", metavar="WHERE",
+                        help="section or series to put it in (see --list)")
+    parser.add_argument("--draft", action="store_true", help="create a draft instead")
+    parser.add_argument("--date", help="date for the post (default: today)")
+    parser.add_argument("--edit", "-e", action="store_true", help="open it in $EDITOR")
+    parser.add_argument("--publish", metavar="DRAFT", help="publish a draft")
+    parser.add_argument("--new-series", nargs=2, metavar=("FOLDER", "TITLE"),
+                        help="create a new series, e.g. projects/hydrophone \"Hydrophone\"")
+    parser.add_argument("--list", action="store_true", help="list sections and series")
+    args = parser.parse_args()
+
+    if args.date and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", args.date):
+        parser.error("--date must look like 2026-01-31")
+
+    if args.list:
+        cmd_list(args)
+    elif args.publish:
+        cmd_publish(args)
+    elif args.new_series:
+        cmd_new_series(args)
+    elif args.title:
+        cmd_new_post(args)
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print()
+        sys.exit(1)

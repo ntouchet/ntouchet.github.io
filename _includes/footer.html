@@ -1,35 +1,8 @@
-<footer class="site-footer h-card">
-  <data class="u-url" href="{{ "/" | relative_url }}"></data>
-
-  <div class="wrapper">
-
-    <h2 class="footer-heading">{{ site.title | escape }}</h2>
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">
-            {%- if site.author -%}
-              {{ site.author | escape }}
-            {%- else -%}
-              {{ site.title | escape }}
-            {%- endif -%}
-            </li>
-            {%- if site.email -%}
-            <li><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-            {%- endif -%}
-        </ul>
-      </div>
-
-      <div class="footer-col footer-col-2">
-        {%- include social.html -%}
-      </div>
-
-      <div class="footer-col footer-col-3">
-        <p>{{- site.description | escape -}}</p>
-      </div>
-    </div>
-
-  </div>
-
+<footer class="site-footer">
+  <p>{{ site.title | escape }} &middot; &copy; {{ site.time | date: "%Y" }} {{ site.author | escape }}</p>
+  <p>
+    {%- if site.github_username %}<a href="https://github.com/{{ site.github_username }}">github</a> &middot; {% endif -%}
+    <a href="{{ '/feed.xml' | relative_url }}">rss feed</a> &middot;
+    <a href="#top">back to top &uarr;</a>
+  </p>
 </footer>

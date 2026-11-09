@@ -1,0 +1,9 @@
+# The GIFs that float down both sides of every page on big screens
+# (and sit in a little row under the menu on phones).
+# Add, remove, or reorder freely. The right-hand column is drawn mirrored.
+# Tip: keep each file under ~2 MB so the site stays quick on phones.
+- /assets/img/guitar.gif
+- /assets/img/humback_whale.gif
+- /assets/img/planet_earth.gif
+- /assets/img/brain.gif
+- /assets/img/antenna.gif

@@ -1,10 +1,70 @@
 ---
 layout: default
 ---
-            <div class="content-wrapper">
-                <div class="retro-container">
-                    <div class="content">
-                        {{ content }} <!-- This is where the content from your page will go -->
-                    </div>
-                </div>
-            </div>
+{%- comment -%}
+  Figure out which section (e.g. academics) and series (e.g. dsp-smith) this
+  post belongs to, purely from the folder it lives in.
+{%- endcomment -%}
+{%- assign parts = page.path | split: "/" -%}
+{%- assign n = parts.size | minus: 2 -%}
+{%- assign post_dir = parts | slice: 0, n | join: "/" -%}
+{%- assign section_dir = parts | first -%}
+{%- assign series_page = nil -%}
+{%- assign section_page = nil -%}
+
+{%- assign series_pages = site.pages | where: "layout", "series" -%}
+{%- for h in series_pages -%}
+  {%- assign hparts = h.path | split: "/" -%}
+  {%- assign hn = hparts.size | minus: 1 -%}
+  {%- assign hdir = hparts | slice: 0, hn | join: "/" -%}
+  {%- if hdir == post_dir %}{% assign series_page = h %}{% endif -%}
+{%- endfor -%}
+
+{%- assign section_pages = site.pages | where: "layout", "section" -%}
+{%- for h in section_pages -%}
+  {%- assign hparts = h.path | split: "/" -%}
+  {%- assign hn = hparts.size | minus: 1 -%}
+  {%- assign hdir = hparts | slice: 0, hn | join: "/" -%}
+  {%- if hdir == section_dir %}{% assign section_page = h %}{% endif -%}
+{%- endfor -%}
+
+<p class="post-meta">
+  <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+  {%- if section_page %}
+  <span class="post-meta__where">
+    in <a href="{{ section_page.url | relative_url }}">{{ section_page.title | escape }}</a>
+    {%- if series_page %} &rsaquo; <a href="{{ series_page.url | relative_url }}">{{ series_page.short_title | default: series_page.title | escape }}</a>{% endif %}
+  </span>
+  {%- endif %}
+</p>
+
+<article class="post-content">
+  {{ content }}
+</article>
+
+{%- if series_page %}
+  {%- assign needle = post_dir | append: "/_" -%}
+  {%- assign series_posts = site.posts | where_exp: "p", "p.path contains needle" | reverse -%}
+  {%- assign idx = -1 -%}
+  {%- for p in series_posts -%}
+    {%- if p.url == page.url %}{% assign idx = forloop.index0 %}{% endif -%}
+  {%- endfor -%}
+  {%- assign prev_post = nil -%}
+  {%- assign next_post = nil -%}
+  {%- if idx > 0 %}{% assign prev_i = idx | minus: 1 %}{% assign prev_post = series_posts[prev_i] %}{% endif -%}
+  {%- assign next_i = idx | plus: 1 -%}
+  {%- if idx >= 0 and next_i < series_posts.size %}{% assign next_post = series_posts[next_i] %}{% endif %}
+<nav class="series-nav" aria-label="More from this series">
+  <div class="series-nav__prev">
+    {%- if prev_post %}<a href="{{ prev_post.url | relative_url }}" rel="prev"><span>&larr; previous</span>{{ prev_post.title | escape }}</a>{% endif -%}
+  </div>
+  <div class="series-nav__all"><a href="{{ series_page.url | relative_url }}">all posts</a></div>
+  <div class="series-nav__next">
+    {%- if next_post %}<a href="{{ next_post.url | relative_url }}" rel="next"><span>next &rarr;</span>{{ next_post.title | escape }}</a>{% endif -%}
+  </div>
+</nav>
+{%- elsif section_page %}
+<nav class="series-nav series-nav--simple" aria-label="Back">
+  <a href="{{ section_page.url | relative_url }}">&larr; back to {{ section_page.title | escape }}</a>
+</nav>
+{%- endif %}

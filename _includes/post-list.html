@@ -1,0 +1,41 @@
+{%- comment -%}
+  Renders a list of posts.
+    posts:    the posts to show (required)
+    numbered: true to show 1, 2, 3… (used for series, oldest first)
+    labels:   false to hide the little series/section tag next to each post
+    empty:    text to show when there are no posts
+{%- endcomment -%}
+{%- assign list_posts = include.posts -%}
+{%- if list_posts.size == 0 -%}
+  <p class="empty-state">{{ include.empty | default: "No posts yet :(" }}</p>
+{%- else -%}
+  {%- assign homes = site.pages | where: "layout", "series" -%}
+  {%- assign section_pages = site.pages | where: "layout", "section" -%}
+  {%- assign homes = homes | concat: section_pages -%}
+  {%- if include.numbered %}<ol class="post-list post-list--numbered">{% else %}<ul class="post-list">{% endif -%}
+  {%- for post in list_posts %}
+    {%- comment -%} Which section/series folder does this post live in? {%- endcomment -%}
+    {%- assign parts = post.path | split: "/" -%}
+    {%- assign n = parts.size | minus: 2 -%}
+    {%- assign post_dir = parts | slice: 0, n | join: "/" -%}
+    {%- assign label_page = nil -%}
+    {%- if include.labels != false and post_dir != "" -%}
+      {%- for h in homes -%}
+        {%- assign hparts = h.path | split: "/" -%}
+        {%- assign hn = hparts.size | minus: 1 -%}
+        {%- assign hdir = hparts | slice: 0, hn | join: "/" -%}
+        {%- if hdir == post_dir %}{% assign label_page = h %}{% endif -%}
+      {%- endfor -%}
+    {%- endif %}
+    <li>
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
+      <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+      {%- if post.favorite %} <span class="star" title="Favorite">&#9733;</span>{% endif -%}
+      {%- if label_page %} <a class="tag" href="{{ label_page.url | relative_url }}">{{ label_page.short_title | default: label_page.title | escape }}</a>{% endif -%}
+      {%- if post.description %}
+      <p class="post-desc">{{ post.description | escape }}</p>
+      {%- endif %}
+    </li>
+  {%- endfor %}
+  {% if include.numbered %}</ol>{% else %}</ul>{% endif -%}
+{%- endif -%}

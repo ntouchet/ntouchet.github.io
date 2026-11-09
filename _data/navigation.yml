@@ -1,0 +1,8 @@
+# Links in the green menu under the title, in this order.
+# `url` can also be a full link to another site.
+- title: Academics
+  url: /academics/
+- title: Projects
+  url: /projects/
+- title: About
+  url: /about/

@@ -1,0 +1,14 @@
+{%- comment -%}
+  An image with an optional caption underneath. In a post:
+
+    {% include figure.html src="/assets/img/my-post/plot.svg" caption="Figure 1: The decimated signal" %}
+
+  Optional: alt="..." (defaults to the caption), width="500" (max width in px).
+  Captions can use markdown and $math$.
+{%- endcomment -%}
+<figure class="figure">
+  <img src="{{ include.src | relative_url }}" alt="{{ include.alt | default: include.caption | strip_html | escape }}"{% if include.width %} width="{{ include.width }}"{% endif %} loading="lazy">
+  {%- if include.caption %}
+  <figcaption>{{ include.caption | markdownify | remove: '<p>' | remove: '</p>' | strip }}</figcaption>
+  {%- endif %}
+</figure>

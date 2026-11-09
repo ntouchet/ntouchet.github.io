@@ -1,0 +1,44 @@
+---
+layout: default
+---
+{%- comment -%}
+  A top-level section like Academics or Projects. Automatically lists:
+    1. every series folder inside this section (each one has an index.md with
+       `layout: series`), with its posts, and
+    2. any posts sitting directly in this section's own _posts folder.
+{%- endcomment -%}
+{%- assign me_parts = page.path | split: "/" -%}
+{%- assign me_n = me_parts.size | minus: 1 -%}
+{%- assign me_dir = me_parts | slice: 0, me_n | join: "/" -%}
+
+{{ content }}
+
+{%- assign all_series = site.pages | where: "layout", "series" | sort: "title" -%}
+{%- assign series_count = 0 -%}
+{%- for s in all_series -%}
+  {%- assign sparts = s.path | split: "/" -%}
+  {%- assign parent_n = sparts.size | minus: 2 -%}
+  {%- assign parent_dir = sparts | slice: 0, parent_n | join: "/" -%}
+  {%- if parent_dir == me_dir -%}
+    {%- assign series_count = series_count | plus: 1 -%}
+    {%- assign sdir_n = sparts.size | minus: 1 -%}
+    {%- assign needle = sparts | slice: 0, sdir_n | join: "/" | append: "/_" -%}
+    {%- assign sposts = site.posts | where_exp: "p", "p.path contains needle" | reverse %}
+<section class="series-card">
+  <h2><a href="{{ s.url | relative_url }}">{{ s.title | escape }}</a></h2>
+  {%- if s.description %}
+  <p class="series-card__desc">{{ s.description | escape }}</p>
+  {%- endif %}
+  {% include post-list.html posts=sposts numbered=true labels=false empty="Nothing posted yet — check back soon." %}
+</section>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign needle = me_dir | append: "/_" -%}
+{%- assign loose_posts = site.posts | where_exp: "p", "p.path contains needle" -%}
+{%- if loose_posts.size > 0 or series_count == 0 %}
+  {%- if series_count > 0 %}
+<h2>Other posts</h2>
+  {%- endif %}
+{% include post-list.html posts=loose_posts labels=false empty=page.empty_message %}
+{%- endif %}

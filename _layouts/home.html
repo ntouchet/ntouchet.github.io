@@ -1,31 +1,17 @@
 ---
 layout: default
 ---
-
-<div class="home">
-    <div class="image-column left">
-    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class=sidebar-image>
-    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
-    </div>
-
-            <div class="content-wrapper">
-                <div class="retro-container">
-                    <div class="content">
-                        {{ content }} <!-- This is where the content from your page will go -->
-                    </div>
-                </div>
-            </div>
-
-    <div class="image-column right mirror">
-    <img src="{{ '../assets/img/guitar.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/humback_whale.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/planet_earth.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/brain.gif' | relative_url }}" class="sidebar-image">
-    <img src="{{ '../assets/img/antenna.gif' | relative_url }}" class="sidebar-image">
-    </div>
-
-
+<div class="intro">
+  {{ content }}
 </div>
+
+{%- assign favorites = site.posts | where: "favorite", true %}
+{%- if favorites.size > 0 %}
+<h2>&#9733; Favorite posts</h2>
+{% include post-list.html posts=favorites %}
+{%- endif %}
+
+<h2>Recent posts</h2>
+{%- assign recent_count = site.recent_posts | default: 10 %}
+{%- assign recent = site.posts | slice: 0, recent_count %}
+{% include post-list.html posts=recent %}

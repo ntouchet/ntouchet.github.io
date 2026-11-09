@@ -1,0 +1,9 @@
+{%- comment -%}
+  One column of floating GIFs. Usage: {% include gif-column.html side="left" %}
+  The list of GIFs lives in _data/sidebar_gifs.yml.
+{%- endcomment -%}
+<div class="gif-column gif-column--{{ include.side }}" aria-hidden="true">
+  {%- for gif in site.data.sidebar_gifs %}
+  <img src="{{ gif | relative_url }}" alt="" loading="lazy" decoding="async">
+  {%- endfor %}
+</div>

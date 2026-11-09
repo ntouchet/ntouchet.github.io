@@ -1,0 +1,31 @@
+---
+layout: default
+---
+{%- comment -%}
+  A series (a book, a course, a multi-part project…). Lists every post in this
+  folder's _posts directory, oldest first.
+{%- endcomment -%}
+{%- assign me_parts = page.path | split: "/" -%}
+{%- assign me_n = me_parts.size | minus: 1 -%}
+{%- assign me_dir = me_parts | slice: 0, me_n | join: "/" -%}
+{%- assign needle = me_dir | append: "/_" -%}
+{%- assign series_posts = site.posts | where_exp: "p", "p.path contains needle" | reverse -%}
+
+{%- if page.description %}
+<p class="lede">{{ page.description | escape }}</p>
+{%- endif %}
+
+{{ content }}
+
+{% include post-list.html posts=series_posts numbered=true labels=false %}
+
+{%- assign section_dir = me_parts | first -%}
+{%- assign section_pages = site.pages | where: "layout", "section" -%}
+{%- for h in section_pages -%}
+  {%- assign hparts = h.path | split: "/" -%}
+  {%- if hparts.size == 2 and hparts[0] == section_dir %}
+<nav class="series-nav series-nav--simple" aria-label="Back">
+  <a href="{{ h.url | relative_url }}">&larr; back to {{ h.title | escape }}</a>
+</nav>
+  {%- endif -%}
+{%- endfor %}

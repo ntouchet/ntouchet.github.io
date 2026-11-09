@@ -1,14 +1,8 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 layout: home
 title: Home
 permalink: /
 ---
-
-### My Vavorite Posts
-No posts yet :(
-
-### Posts
-No posts yet :(
-
+Welcome to **Electric Soup**, where I turn my homework in to the internet. Mostly
+electrical engineering and DSP, with music tech and other rabbit holes mixed in.
+More [about this site](/about/).
