@@ -14,8 +14,18 @@
           <stop offset="1" stop-color="#9c00ff"/>
         </linearGradient>
       </defs>
-      <text class="title-shadow" x="307" y="187" text-anchor="middle" textLength="580" lengthAdjust="spacingAndGlyphs">{{ site.title | escape }}</text>
-      <text class="title-fill" x="300" y="180" text-anchor="middle" textLength="580" lengthAdjust="spacingAndGlyphs" fill="url(#title-rainbow)">{{ site.title | escape }}</text>
+      {%- comment -%}
+        The tall, skinny WordArt look comes from squishing the letters sideways
+        with scale(0.3794, 1). The font is monospaced (every letter is 0.6 × the
+        font size wide), so "Electric Soup" = 13 × 0.6 × 196 = 1528.8 wide, and
+        580 / 1528.8 = 0.3794 makes it exactly 580 wide. If you change the site
+        title's length, redo that math. (SVG's textLength would do this
+        automatically, but it rendered wrong on phones, so avoid it.)
+      {%- endcomment %}
+      <g transform="translate(300 180) scale(0.3794 1)">
+        <text class="title-shadow" x="18.45" y="7" text-anchor="middle">{{ site.title | escape }}</text>
+        <text class="title-fill" x="0" y="0" text-anchor="middle" fill="url(#title-rainbow)">{{ site.title | escape }}</text>
+      </g>
     </svg>
   </a>
 
